@@ -28,12 +28,12 @@ var storage = multer.diskStorage({
       if (i != arr.length - 1) {
         newFileName += arr[i];
       } else {
-        if ("JPGE" != arr[i]) {
-          newFileName += "-" + Date.now() + ".JPGE";
-        } else {
-          newFileName += "-" + Date.now() + "." + arr[i];
-        }
-        // newFileName += "-" + Date.now() + "." + arr[i];
+        // if ("JPGE" != arr[i]) {
+        //   newFileName += "-" + Date.now() + ".JPGE";
+        // } else {
+        //   newFileName += "-" + Date.now() + "." + arr[i];
+        // }
+        newFileName += "-" + Date.now() + "." + arr[i];
       }
     }
 
@@ -43,9 +43,8 @@ var storage = multer.diskStorage({
 
 var upload = multer({
   storage: storage,
-  limits: { fieldSize: 1 * 1024 * 1024 },
 });
-
+var maxSize = 10485760;
 app.post("/uploadfile", upload.single("myFile"), (req, res, next) => {
   const file = req.file;
   if (!file) {
@@ -53,8 +52,8 @@ app.post("/uploadfile", upload.single("myFile"), (req, res, next) => {
     error.httpStatusCode = 400;
     return next(error);
   }
-  if (file.size < 1000000) {
-    const error = new Error("Please upload a file larger than 1mb");
+  if (file.size > maxSize) {
+    const error = new Error("Please upload files smaller than 1mb");
     error.httpStatusCode = 400;
     return next(error);
   }
